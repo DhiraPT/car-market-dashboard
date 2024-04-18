@@ -1,0 +1,50 @@
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  height: 64px;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  color: white;
+}
+
+.car-tree {
+  overflow: auto;
+  height: calc(100vh - 64px);
+  width: 200px;
+  left: 0;
+  padding: 12px 8px;
+}
+
+.content {
+  margin: 16px;
+}
+
+.content-card {
+  background-color: white;
+  border-radius: 0;
+}
