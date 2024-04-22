@@ -39,13 +39,16 @@ const MSRPDeltaGraph: React.FC = () => {
     data: msrpDeltaData,
     xField: "date",
     yField: "msrp_delta",
-    seriesField: "model_submodel",
+    colorField: "model_submodel",
     slider: {
       x: {
         values: [0.6, 1],
       },
     },
     responsive: true,
+    interaction: {
+      legendFilter: false,
+    },
   };
 
   return (

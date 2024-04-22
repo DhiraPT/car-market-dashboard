@@ -37,13 +37,16 @@ const MSRPGraph: React.FC = () => {
     data: msrpData,
     xField: "date",
     yField: "msrp",
-    seriesField: "model_submodel",
+    colorField: "model_submodel",
     slider: {
       x: {
         values: [0.6, 1],
       },
     },
     responsive: true,
+    interaction: {
+      legendFilter: false,
+    },
   };
 
   return (
