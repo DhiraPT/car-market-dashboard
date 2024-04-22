@@ -1,11 +1,10 @@
 import { Line, LineConfig } from "@ant-design/charts";
-import { MSRPGraphDataType } from "../types/graph.types";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { DataContext } from "../utils/DataContextProvider";
-import { Card, Flex, Segmented } from "antd";
+import { Card, Segmented } from "antd";
 
 const MSRPGraph: React.FC = () => {
-  const { data, setData, checkedKeys, setCheckedKeys } = useContext(DataContext);
+  const { data, checkedKeys } = useContext(DataContext);
 
   const msrpData = data
     .flatMap((carBrand) => {

@@ -1,15 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { Layout, TreeDataNode, theme } from "antd";
-import { Content, Header } from "antd/es/layout/layout";
+import { Layout } from "antd";
+import { Header } from "antd/es/layout/layout";
 import CarTree from "./components/CarTree";
 import MainArea from "./components/MainArea";
 import supabase from "./utils/supabase";
-import { DataContext, DataContextProvider } from "./utils/DataContextProvider";
+import { DataContext } from "./utils/DataContextProvider";
 
 function App() {
-  const { data, setData } = useContext(DataContext);
+  const { setData } = useContext(DataContext);
 
   const getAllCarData = async () => {
     const { data } = await supabase
@@ -47,7 +47,7 @@ function App() {
       }
     }
     fetchData();
-  }, []);
+  }, [setData]);
 
   return (
     <>

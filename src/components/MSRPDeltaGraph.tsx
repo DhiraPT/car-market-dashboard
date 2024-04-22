@@ -1,10 +1,10 @@
 import { Line } from "@ant-design/charts";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { DataContext } from "../utils/DataContextProvider";
-import { Card, Flex, Segmented } from "antd";
+import { Card, Segmented } from "antd";
 
 const MSRPDeltaGraph: React.FC = () => {
-  const { data, setData, checkedKeys, setCheckedKeys } = useContext(DataContext);
+  const { data, checkedKeys } = useContext(DataContext);
 
   const msrpDeltaData = data
     .flatMap((carBrand) => {

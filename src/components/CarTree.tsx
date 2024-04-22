@@ -1,9 +1,9 @@
-import { Flex, Tree, TreeDataNode, TreeProps } from "antd";
+import { Tree, TreeDataNode, TreeProps } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../utils/DataContextProvider";
 
 const CarTree: React.FC = () => {
-  const { data, setData, checkedKeys, setCheckedKeys } = useContext(DataContext);
+  const { data, checkedKeys, setCheckedKeys } = useContext(DataContext);
   const [treeData, setTreeData] = useState<TreeDataNode[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);

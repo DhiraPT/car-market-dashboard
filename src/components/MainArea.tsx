@@ -1,7 +1,7 @@
 import { Content } from "antd/es/layout/layout";
 import MSRPGraph from "./MSRPGraph";
 import MSRPDeltaGraph from "./MSRPDeltaGraph";
-import { Col, Flex, Row } from "antd";
+import { Col, Row } from "antd";
 
 const MainArea: React.FC = () => {
   return (
