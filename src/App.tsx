@@ -1,65 +1,34 @@
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import { Layout } from "antd";
 import { Header } from "antd/es/layout/layout";
-import CarTree from "./components/CarTree";
-import MainArea from "./components/MainArea";
 import supabase from "./utils/supabase";
-import { DataContext } from "./utils/DataContextProvider";
+import MainLayout from "./components/MainLayout";
+import { Session } from "@supabase/supabase-js";
+import LoginForm from "./components/LoginForm";
 
 function App() {
-  const { setData } = useContext(DataContext);
-
-  const getAllCarData = async () => {
-    const { data } = await supabase
-      .from("CarBrands")
-      .select(
-        `
-        *,
-        CarModels (
-          model_id,
-          model,
-          CarSubmodels (
-            submodel_id,
-            submodel,
-            coe_type,
-            CarPrices (
-              date,
-              price
-            )
-          )
-        )
-      `,
-      )
-      .order("date", {
-        referencedTable: "CarModels.CarSubmodels.CarPrices",
-        ascending: true,
-      });
-    return data;
-  };
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
-      const initCarData = await getAllCarData();
-      if (initCarData) {
-        setData(initCarData);
-      }
-    }
-    fetchData();
-  }, [setData]);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
 
   return (
     <>
-      <Layout>
+      <Layout className="layout">
         <Header className="header">
           <img src={viteLogo} className="logo" alt="Vite Logo" />
           <h1 className="title">Car Market Dashboard</h1>
         </Header>
-        <Layout hasSider>
-          <CarTree />
-          <MainArea />
-        </Layout>
+        {!session ? <LoginForm /> : <MainLayout />}
       </Layout>
     </>
   );
