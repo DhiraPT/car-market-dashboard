@@ -1,12 +1,13 @@
 import { Line } from "@ant-design/charts";
 import { useContext } from "react";
-import { DataContext } from "../utils/DataContextProvider";
+import { DataContext } from "../providers/DataContextProvider";
 import { Card, Segmented } from "antd";
+import { formatDate } from "../utils/date.utils";
 
 const MSRPDeltaGraph: React.FC = () => {
-  const { data, checkedKeys } = useContext(DataContext);
+  const { carModelData, checkedKeys } = useContext(DataContext);
 
-  const msrpDeltaData = data
+  const msrpDeltaData = carModelData
     .flatMap((carModel) => {
       return carModel.CarSubmodels.flatMap((carSubmodel) => {
         return carSubmodel.CarPrices.map((carPrice, index) => {
@@ -14,7 +15,7 @@ const MSRPDeltaGraph: React.FC = () => {
           return {
             key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
             model_submodel: `${carModel.model} ${carSubmodel.submodel}`,
-            date: carPrice.date,
+            date: formatDate(carPrice.date),
             msrp_delta: carPrice.price - previousPrice,
           };
         });

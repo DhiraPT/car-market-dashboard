@@ -1,16 +1,16 @@
 import { Tree, TreeDataNode, TreeProps } from "antd";
 import { useContext, useEffect, useState } from "react";
-import { DataContext } from "../utils/DataContextProvider";
+import { DataContext } from "../providers/DataContextProvider";
 
 const CarTree: React.FC = () => {
-  const { data, checkedKeys, setCheckedKeys } = useContext(DataContext);
+  const { carModelData, checkedKeys, setCheckedKeys } = useContext(DataContext);
   const [treeData, setTreeData] = useState<TreeDataNode[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
   useEffect(() => {
     setTreeData(
-      data
+      carModelData
         .reduce((acc, carModel) => {
           if (!carModel.CarBrands) {
             const existingOthersIndex = acc.findIndex((node) => node.title === "Others");
@@ -67,7 +67,7 @@ const CarTree: React.FC = () => {
           return titleA.localeCompare(titleB);
         }),
     );
-  }, [data]);
+  }, [carModelData]);
 
   const onExpand: TreeProps["onExpand"] = (expandedKeysValue) => {
     console.log("onExpand", expandedKeysValue);
