@@ -10,27 +10,26 @@ const MainLayout = () => {
 
   const getAllCarData = async () => {
     const { data } = await supabase
-      .from("CarBrands")
+      .from("CarModels")
       .select(
         `
-        *,
-        CarModels (
-          model_id,
-          model,
-          CarSubmodels (
-            submodel_id,
-            submodel,
-            coe_type,
-            CarPrices (
-              date,
-              price
-            )
+        model_id,
+        model,
+        CarBrands(*),
+        CarSubmodels (
+          submodel_id,
+          submodel,
+          coe_type,
+          CarPrices (
+            date,
+            price,
+            is_coe_included
           )
         )
       `,
       )
       .order("date", {
-        referencedTable: "CarModels.CarSubmodels.CarPrices",
+        referencedTable: "CarSubmodels.CarPrices",
         ascending: true,
       });
     return data;

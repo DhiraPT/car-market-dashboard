@@ -10,20 +10,62 @@ const CarTree: React.FC = () => {
 
   useEffect(() => {
     setTreeData(
-      data.map((carBrand) => {
-        return {
-          title: carBrand.brand,
-          key: carBrand.brand_id,
-          children: carBrand.CarModels.flatMap((carModel) => {
-            return carModel.CarSubmodels.map((carSubmodel) => {
-              return {
-                title: `${carModel.model} ${carSubmodel.submodel}`,
-                key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-              };
-            });
-          }),
-        };
-      }),
+      data
+        .reduce((acc, carModel) => {
+          if (!carModel.CarBrands) {
+            const existingOthersIndex = acc.findIndex((node) => node.title === "Others");
+            if (existingOthersIndex === -1) {
+              acc.push({
+                key: "Others",
+                title: "Others",
+                children: carModel.CarSubmodels.map((carSubmodel) => ({
+                  key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                })),
+              });
+            } else {
+              acc[existingOthersIndex]?.children?.push(
+                ...carModel.CarSubmodels.map((carSubmodel) => ({
+                  key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                })),
+              );
+            }
+          } else {
+            const existingBrandIndex = acc.findIndex(
+              (node) => node.title === carModel.CarBrands!.brand,
+            );
+            if (existingBrandIndex === -1) {
+              acc.push({
+                key: carModel.CarBrands.brand,
+                title: carModel.CarBrands.brand,
+                children: carModel.CarSubmodels.map((carSubmodel) => ({
+                  key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                })),
+              });
+            } else {
+              acc[existingBrandIndex]?.children?.push(
+                ...carModel.CarSubmodels.map((carSubmodel) => ({
+                  key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                })),
+              );
+            }
+          }
+          return acc;
+        }, [] as TreeDataNode[])
+        .sort((a, b) => {
+          const titleA = typeof a.title === "string" ? a.title : "";
+          const titleB = typeof b.title === "string" ? b.title : "";
+          if (titleA === "Others") {
+            return 1;
+          }
+          if (titleB === "Others") {
+            return -1;
+          }
+          return titleA.localeCompare(titleB);
+        }),
     );
   }, [data]);
 

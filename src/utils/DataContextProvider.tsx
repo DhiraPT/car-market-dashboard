@@ -1,10 +1,10 @@
 import { createContext, useState, ReactNode } from "react";
-import { CarBrandType } from "../types/query.types";
+import { CarModelType } from "../types/query.types";
 
 // Define the type for the context
 type ContextType = {
-  data: CarBrandType[];
-  setData: React.Dispatch<React.SetStateAction<CarBrandType[]>>;
+  data: CarModelType[];
+  setData: React.Dispatch<React.SetStateAction<CarModelType[]>>;
   checkedKeys: React.Key[];
   setCheckedKeys: React.Dispatch<React.SetStateAction<React.Key[]>>;
 };
@@ -18,7 +18,7 @@ export const DataContext = createContext<ContextType>({
 });
 
 export const DataContextProvider = ({ children }: { children: ReactNode }) => {
-  const [data, setData] = useState<CarBrandType[]>([]);
+  const [data, setData] = useState<CarModelType[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
 
   return (

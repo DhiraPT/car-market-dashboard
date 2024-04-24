@@ -7,17 +7,15 @@ const MSRPGraph: React.FC = () => {
   const { data, checkedKeys } = useContext(DataContext);
 
   const msrpData = data
-    .flatMap((carBrand) => {
-      return carBrand.CarModels.flatMap((carModel) => {
-        return carModel.CarSubmodels.flatMap((carSubmodel) => {
-          return carSubmodel.CarPrices.map((carPrice) => {
-            return {
-              key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-              model_submodel: `${carModel.model} ${carSubmodel.submodel}`,
-              date: carPrice.date,
-              msrp: carPrice.price,
-            };
-          });
+    .flatMap((carModel) => {
+      return carModel.CarSubmodels.flatMap((carSubmodel) => {
+        return carSubmodel.CarPrices.map((carPrice) => {
+          return {
+            key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+            model_submodel: `${carModel.model} ${carSubmodel.submodel}`,
+            date: carPrice.date,
+            msrp: carPrice.price,
+          };
         });
       });
     })

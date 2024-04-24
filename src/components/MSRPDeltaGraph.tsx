@@ -7,19 +7,16 @@ const MSRPDeltaGraph: React.FC = () => {
   const { data, checkedKeys } = useContext(DataContext);
 
   const msrpDeltaData = data
-    .flatMap((carBrand) => {
-      return carBrand.CarModels.flatMap((carModel) => {
-        return carModel.CarSubmodels.flatMap((carSubmodel) => {
-          return carSubmodel.CarPrices.map((carPrice, index) => {
-            const previousPrice =
-              index > 0 ? carSubmodel.CarPrices[index - 1].price : carPrice.price;
-            return {
-              key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-              model_submodel: `${carModel.model} ${carSubmodel.submodel}`,
-              date: carPrice.date,
-              msrp_delta: carPrice.price - previousPrice,
-            };
-          });
+    .flatMap((carModel) => {
+      return carModel.CarSubmodels.flatMap((carSubmodel) => {
+        return carSubmodel.CarPrices.map((carPrice, index) => {
+          const previousPrice = index > 0 ? carSubmodel.CarPrices[index - 1].price : carPrice.price;
+          return {
+            key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+            model_submodel: `${carModel.model} ${carSubmodel.submodel}`,
+            date: carPrice.date,
+            msrp_delta: carPrice.price - previousPrice,
+          };
         });
       });
     })
