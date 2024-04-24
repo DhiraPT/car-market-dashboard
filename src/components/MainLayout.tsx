@@ -1,15 +1,38 @@
-import { Layout } from "antd";
+import { Layout, Tabs } from "antd";
 import CarTree from "./CarTree";
-import MainArea from "./MainArea";
 import { useContext, useEffect } from "react";
 import supabase from "../utils/supabase";
 import { DataContext } from "../providers/DataContextProvider";
 import { CarModelType } from "../types/car.types";
+import { Content } from "antd/es/layout/layout";
+import MSRPGraph from "./MSRPGraph";
+import MSRPDeltaGraph from "./MSRPDeltaGraph";
+import { CoeDataType } from "../types/coe.types";
 
 const MainLayout = () => {
-  const { setCarModelData } = useContext(DataContext);
+  const { setCoeData, setCarModelData } = useContext(DataContext);
 
-  const getAllCarData = async (): Promise<CarModelType[]> => {
+  const fetchCoeData = async () => {
+    const { data } = await supabase
+      .from("CoeBiddings")
+      .select("*")
+      .order("date", { ascending: true });
+
+    const parsedData: CoeDataType[] = [];
+    if (data) {
+      data.forEach((coeData) => {
+        parsedData.push({
+          coe_type: coeData.coe_type,
+          bidding_date: new Date(coeData.bidding_date),
+          premium: coeData.premium,
+          quota: coeData.quota,
+        });
+      });
+    }
+    return parsedData;
+  };
+
+  const fetchAllCarData = async (): Promise<CarModelType[]> => {
     const { data } = await supabase
       .from("CarModels")
       .select(
@@ -64,18 +87,31 @@ const MainLayout = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const initCarData = await getAllCarData();
+      const initCoeData = await fetchCoeData();
+      if (initCoeData) {
+        setCoeData(initCoeData);
+      }
+      const initCarData = await fetchAllCarData();
       if (initCarData) {
         setCarModelData(initCarData);
       }
     }
     fetchData();
-  }, [setCarModelData]);
+  }, [setCoeData, setCarModelData]);
 
   return (
     <Layout hasSider>
       <CarTree />
-      <MainArea />
+      <Content className="content">
+        <Tabs
+          defaultActiveKey="1"
+          tabPosition="top"
+          items={[
+            { key: "1", label: "MSRP Graph", children: <MSRPGraph /> },
+            { key: "2", label: "MSRP Delta Graph", children: <MSRPDeltaGraph /> },
+          ]}
+        />
+      </Content>
     </Layout>
   );
 };

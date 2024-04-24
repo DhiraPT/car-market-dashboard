@@ -1,7 +1,7 @@
 import { Line, LineConfig } from "@ant-design/charts";
 import { useContext } from "react";
 import { DataContext } from "../providers/DataContextProvider";
-import { Card, Segmented } from "antd";
+import { Segmented } from "antd";
 import { formatDate } from "../utils/date.utils";
 
 const MSRPGraph: React.FC = () => {
@@ -49,7 +49,7 @@ const MSRPGraph: React.FC = () => {
   };
 
   return (
-    <Card className="content-card">
+    <>
       <Segmented
         options={["Daily", "Weekly", "Monthly", "Quarterly", "Yearly"]}
         onChange={(value) => {
@@ -57,7 +57,7 @@ const MSRPGraph: React.FC = () => {
         }}
       />
       <Line {...config} />
-    </Card>
+    </>
   );
 };
 

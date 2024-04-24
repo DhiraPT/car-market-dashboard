@@ -47,15 +47,12 @@
 }
 
 .content {
+  background-color: white;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin: 16px;
-}
-
-.content-card {
-  background-color: white;
-  border-radius: 0;
+  margin: 12px;
+  padding: 0 14px;
 }
 
 .login-form {

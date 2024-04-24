@@ -1,7 +1,7 @@
 import { Line } from "@ant-design/charts";
 import { useContext } from "react";
 import { DataContext } from "../providers/DataContextProvider";
-import { Card, Segmented } from "antd";
+import { Segmented } from "antd";
 import { formatDate } from "../utils/date.utils";
 
 const MSRPDeltaGraph: React.FC = () => {
@@ -50,7 +50,7 @@ const MSRPDeltaGraph: React.FC = () => {
   };
 
   return (
-    <Card className="content-card">
+    <>
       <Segmented
         options={["Daily", "Weekly", "Monthly", "Quarterly", "Yearly"]}
         onChange={(value) => {
@@ -58,7 +58,7 @@ const MSRPDeltaGraph: React.FC = () => {
         }}
       />
       <Line {...config} />
-    </Card>
+    </>
   );
 };
 
