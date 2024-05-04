@@ -3,16 +3,17 @@ import CarTree from "./CarTree";
 import { useContext, useEffect } from "react";
 import supabase from "../utils/supabase";
 import { DataContext } from "../providers/DataContextProvider";
-import { CarModelType, CarPriceType } from "../types/car.types";
+import { CarModelType, CarPriceType, CarType } from "../types/car.types";
 import { Content } from "antd/es/layout/layout";
 import MSRPGraph from "./MSRPGraph";
 import MSRPDeltaGraph from "./MSRPDeltaGraph";
 import { CoeDataType } from "../types/coe.types";
 
 const MainLayout = () => {
-  const { coeData, setCoeData, setCarModelData } = useContext(DataContext);
+  const { setCarModelData, setSelectedCarData, checkedKeys, coeData, setCoeData } =
+    useContext(DataContext);
 
-  const fetchCoeData = async () => {
+  const fetchCoeData = async (): Promise<CoeDataType[]> => {
     const { data } = await supabase
       .from("CoeBiddings")
       .select("*")
@@ -32,14 +33,31 @@ const MainLayout = () => {
     return parsedData;
   };
 
-  const fetchAllCarData = async (): Promise<CarModelType[]> => {
+  const fetchCarModels = async (): Promise<CarModelType[]> => {
+    const { data } = await supabase.from("CarModels").select(`
+      model_id,
+      model,
+      is_parallel_imported,
+      CarBrands(*),
+      CarSubmodels (
+        submodel_id,
+        submodel,
+        coe_type
+      )`);
+    return data || [];
+  };
+
+  const fetchCarData = async (): Promise<CarType[]> => {
     const coeDates = coeData.map((coe) => coe.bidding_date);
+    const filteredCheckedKeys = checkedKeys.filter((key) => key.toString().includes("-"));
+
     const { data } = await supabase
       .from("CarModels")
       .select(
         `
         model_id,
         model,
+        is_parallel_imported,
         CarBrands(*),
         CarSubmodels (
           submodel_id,
@@ -53,12 +71,20 @@ const MainLayout = () => {
         )
       `,
       )
+      .in(
+        "model_id",
+        filteredCheckedKeys.map((key) => parseInt(key.toString().split("-")[0])),
+      )
+      .in(
+        "CarSubmodels.submodel_id",
+        filteredCheckedKeys.map((key) => parseInt(key.toString().split("-")[1])),
+      )
       .order("date", {
         referencedTable: "CarSubmodels.CarPrices",
         ascending: true,
       });
 
-    const parsedData: CarModelType[] = [];
+    const parsedData: CarType[] = [];
     if (data) {
       data.forEach((carModel) => {
         const carSubmodels = carModel.CarSubmodels.map((carSubmodel) => {
@@ -78,13 +104,14 @@ const MainLayout = () => {
         parsedData.push({
           model_id: carModel.model_id,
           model: carModel.model,
+          is_parallel_imported: carModel.is_parallel_imported,
           CarBrands: carModel.CarBrands,
           CarSubmodels: carSubmodels,
         });
       });
     }
 
-    const adjustedParsedData: CarModelType[] = [];
+    const adjustedParsedData: CarType[] = [];
     if (parsedData && coeDates.length > 0) {
       parsedData.map((carModel) => {
         const carSubmodels = carModel.CarSubmodels.map((carSubmodel) => {
@@ -120,6 +147,7 @@ const MainLayout = () => {
         adjustedParsedData.push({
           model_id: carModel.model_id,
           model: carModel.model,
+          is_parallel_imported: carModel.is_parallel_imported,
           CarBrands: carModel.CarBrands,
           CarSubmodels: carSubmodels,
         });
@@ -139,14 +167,24 @@ const MainLayout = () => {
   }, [setCoeData]);
 
   useEffect(() => {
+    async function getCarModelData() {
+      const initCarModelData = await fetchCarModels();
+      if (initCarModelData && coeData) {
+        setCarModelData(initCarModelData);
+      }
+    }
+    getCarModelData();
+  }, [coeData, setCarModelData]);
+
+  useEffect(() => {
     async function getCarData() {
-      const initCarData = await fetchAllCarData();
-      if (initCarData && coeData) {
-        setCarModelData(initCarData);
+      const initCarData = await fetchCarData();
+      if (initCarData) {
+        setSelectedCarData(initCarData);
       }
     }
     getCarData();
-  }, [coeData]);
+  }, [checkedKeys, setSelectedCarData]);
 
   return (
     <Layout hasSider>

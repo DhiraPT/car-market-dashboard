@@ -20,14 +20,14 @@ const CarTree: React.FC = () => {
                 title: "Others",
                 children: carModel.CarSubmodels.map((carSubmodel) => ({
                   key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}${carModel.is_parallel_imported ? " (PI)" : ""}`,
                 })),
               });
             } else {
               acc[existingOthersIndex]?.children?.push(
                 ...carModel.CarSubmodels.map((carSubmodel) => ({
                   key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}${carModel.is_parallel_imported ? " (PI)" : ""}`,
                 })),
               );
             }
@@ -41,14 +41,14 @@ const CarTree: React.FC = () => {
                 title: carModel.CarBrands.brand,
                 children: carModel.CarSubmodels.map((carSubmodel) => ({
                   key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}${carModel.is_parallel_imported ? " (PI)" : ""}`,
                 })),
               });
             } else {
               acc[existingBrandIndex]?.children?.push(
                 ...carModel.CarSubmodels.map((carSubmodel) => ({
                   key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-                  title: `${carModel.model} ${carSubmodel.submodel}`,
+                  title: `${carModel.model} ${carSubmodel.submodel}${carModel.is_parallel_imported ? " (PI)" : ""}`,
                 })),
               );
             }

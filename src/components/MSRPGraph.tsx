@@ -5,23 +5,21 @@ import { Segmented } from "antd";
 import { formatDate } from "../utils/date.utils";
 
 const MSRPGraph: React.FC = () => {
-  const { carModelData, checkedKeys, coeData } = useContext(DataContext);
+  const { selectedCarData, checkedKeys, coeData } = useContext(DataContext);
 
-  const msrpData = carModelData
-    .flatMap((carModel) => {
-      return carModel.CarSubmodels.flatMap((carSubmodel) => {
-        return carSubmodel.CarPrices.map((carPrice) => {
-          return {
-            key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-            model_submodel: `${carModel.model} ${carSubmodel.submodel}`,
-            date: formatDate(carPrice.date),
-            msrp: carPrice.price,
-            coe_type: carSubmodel.coe_type,
-          };
-        });
+  const msrpData = selectedCarData.flatMap((carModel) => {
+    return carModel.CarSubmodels.flatMap((carSubmodel) => {
+      return carSubmodel.CarPrices.map((carPrice) => {
+        return {
+          key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+          label: `${carModel.model} ${carSubmodel.submodel}${carModel.is_parallel_imported ? " (PI)" : ""}`,
+          date: formatDate(carPrice.date),
+          msrp: carPrice.price,
+          coe_type: carSubmodel.coe_type,
+        };
       });
-    })
-    .filter((entry) => checkedKeys.includes(entry.key));
+    });
+  });
 
   // Earliest date in the msrpData
   const earliestDate = new Date(
@@ -43,13 +41,15 @@ const MSRPGraph: React.FC = () => {
     ...filteredCoeData.map((coe) => {
       return {
         key: `COE Category ${coe.coe_type}`,
-        model_submodel: `COE Category ${coe.coe_type}`,
+        label: `COE Category ${coe.coe_type}`,
         date: formatDate(coe.bidding_date),
         msrp: coe.premium,
         coe_type: coe.coe_type,
       };
     }),
   );
+
+  msrpData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const config: LineConfig = {
     title: {
@@ -65,7 +65,7 @@ const MSRPGraph: React.FC = () => {
     data: msrpData,
     xField: "date",
     yField: "msrp",
-    colorField: "model_submodel",
+    colorField: "label",
     slider: {
       x: {
         values: [0.6, 1],

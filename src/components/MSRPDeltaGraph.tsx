@@ -5,23 +5,21 @@ import { Segmented } from "antd";
 import { formatDate } from "../utils/date.utils";
 
 const MSRPDeltaGraph: React.FC = () => {
-  const { carModelData, checkedKeys } = useContext(DataContext);
+  const { selectedCarData } = useContext(DataContext);
 
-  const msrpDeltaData = carModelData
-    .flatMap((carModel) => {
-      return carModel.CarSubmodels.flatMap((carSubmodel) => {
-        return carSubmodel.CarPrices.map((carPrice, index) => {
-          const previousPrice = index > 0 ? carSubmodel.CarPrices[index - 1].price : carPrice.price;
-          return {
-            key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
-            model_submodel: `${carModel.model} ${carSubmodel.submodel}`,
-            date: formatDate(carPrice.date),
-            msrp_delta: carPrice.price - previousPrice,
-          };
-        });
+  const msrpDeltaData = selectedCarData.flatMap((carModel) => {
+    return carModel.CarSubmodels.flatMap((carSubmodel) => {
+      return carSubmodel.CarPrices.map((carPrice, index) => {
+        const previousPrice = index > 0 ? carSubmodel.CarPrices[index - 1].price : carPrice.price;
+        return {
+          key: `${carModel.model_id}-${carSubmodel.submodel_id}`,
+          label: `${carModel.model} ${carSubmodel.submodel}${carModel.is_parallel_imported ? " (PI)" : ""}`,
+          date: formatDate(carPrice.date),
+          msrp_delta: carPrice.price - previousPrice,
+        };
       });
-    })
-    .filter((entry) => checkedKeys.includes(entry.key));
+    });
+  });
 
   const config = {
     title: {
@@ -37,7 +35,7 @@ const MSRPDeltaGraph: React.FC = () => {
     data: msrpDeltaData,
     xField: "date",
     yField: "msrp_delta",
-    colorField: "model_submodel",
+    colorField: "label",
     slider: {
       x: {
         values: [0.6, 1],
