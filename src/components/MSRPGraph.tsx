@@ -10,6 +10,7 @@ const MSRPGraph: React.FC = () => {
     { key: string; label: string; date: string; msrp: number; coe_type: string | null }[]
   >([]);
   const [config, setConfig] = useState<LineConfig>({});
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("All Time");
 
   const initMsrpData = selectedCarData.flatMap((carModel) => {
     return carModel.CarSubmodels.flatMap((carSubmodel) => {
@@ -52,12 +53,33 @@ const MSRPGraph: React.FC = () => {
       };
     }),
   );
-  
+
   initMsrpData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   useEffect(() => {
-    setMsrpData(initMsrpData);
-  }, [selectedCarData]);
+    const currentDate = new Date();
+    const sixMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
+    const twelveMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
+    const eighteenMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
+    const twentyFourMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
+
+    const filteredMsrpData = initMsrpData.filter((entry) => {
+      const date = new Date(entry.date);
+      switch (selectedPeriod) {
+        case "6 Months":
+          return date >= sixMonthsAgo;
+        case "12 Months":
+          return date >= twelveMonthsAgo;
+        case "18 Months":
+          return date >= eighteenMonthsAgo;
+        case "24 Months":
+          return date >= twentyFourMonthsAgo;
+        default:
+          return true;
+      }
+    });
+    setMsrpData(filteredMsrpData);
+  }, [selectedCarData, selectedPeriod]);
 
   useEffect(() => {
     setConfig({
@@ -88,35 +110,15 @@ const MSRPGraph: React.FC = () => {
   }, [msrpData]);
 
   const changePeriod = (value: string) => {
-    const currentDate = new Date();
-    const sixMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
-    const twelveMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
-    const eighteenMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
-    const twentyFourMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
-
-    const filteredMsrpData = initMsrpData.filter((entry) => {
-      const date = new Date(entry.date);
-      switch (value) {
-        case "6 Months":
-          return date >= sixMonthsAgo;
-        case "12 Months":
-          return date >= twelveMonthsAgo;
-        case "18 Months":
-          return date >= eighteenMonthsAgo;
-        case "24 Months":
-          return date >= twentyFourMonthsAgo;
-        default:
-          return true;
-      }
-    });
-    setMsrpData(filteredMsrpData);
+    setSelectedPeriod(value);
   };
 
   return (
     <>
       <Segmented
+        value={selectedPeriod}
         options={["6 Months", "12 Months", "18 Months", "24 Months", "All Time"]}
-        onChange={(value) => changePeriod(value)}
+        onChange={changePeriod}
       />
       <Line {...config} />
     </>

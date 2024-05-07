@@ -12,6 +12,7 @@ type ContextType = {
   setCheckedKeys: React.Dispatch<React.SetStateAction<React.Key[]>>;
   coeData: CoeDataType[];
   setCoeData: React.Dispatch<React.SetStateAction<CoeDataType[]>>;
+  coeTypes: string[];
 };
 
 // Create the context with the specified type
@@ -24,6 +25,7 @@ export const DataContext = createContext<ContextType>({
   setCheckedKeys: () => {},
   coeData: [],
   setCoeData: () => {},
+  coeTypes: [],
 });
 
 export const DataContextProvider = ({ children }: { children: ReactNode }) => {
@@ -31,6 +33,7 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const [selectedCarData, setSelectedCarData] = useState<CarType[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [coeData, setCoeData] = useState<CoeDataType[]>([]);
+  const coeTypes = Array.from(new Set(coeData.map((coe) => coe.coe_type)));
 
   return (
     <DataContext.Provider
@@ -43,6 +46,7 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
         setCheckedKeys,
         coeData,
         setCoeData,
+        coeTypes,
       }}
     >
       {children}

@@ -6,7 +6,7 @@ import { DataContext } from "../providers/DataContextProvider";
 import { CarModelType, CarPriceType, CarType } from "../types/car.types";
 import { Content } from "antd/es/layout/layout";
 import MSRPGraph from "./MSRPGraph";
-import MSRPDeltaGraph from "./MSRPDeltaGraph";
+import MSRPPercentageChangeGraph from "./MSRPPercentageChangeGraph";
 import { CoeDataType } from "../types/coe.types";
 
 const MainLayout = () => {
@@ -48,7 +48,7 @@ const MainLayout = () => {
   };
 
   const fetchCarData = async (): Promise<CarType[]> => {
-    const coeDates = coeData.map((coe) => coe.bidding_date);
+    const coeDates = coeData.filter((coe) => coe.coe_type === "A").map((coe) => coe.bidding_date);
     const filteredCheckedKeys = checkedKeys.filter((key) => key.toString().includes("-"));
 
     const { data } = await supabase
@@ -195,7 +195,7 @@ const MainLayout = () => {
           tabPosition="top"
           items={[
             { key: "1", label: "MSRP Graph", children: <MSRPGraph /> },
-            { key: "2", label: "MSRP Delta Graph", children: <MSRPDeltaGraph /> },
+            { key: "2", label: "MSRP Delta Graph", children: <MSRPPercentageChangeGraph /> },
           ]}
         />
       </Content>
